@@ -7,14 +7,20 @@
     <div class="left-bottom">
       <lineEcharts :linde-data="HomeLineDatas"></lineEcharts>
     </div>
-    <div class="center"></div>
-    <div class="bottom"></div>
-    <div class="right-top"></div>
+    <div class="center">
+      <CenterSvg></CenterSvg>
+    </div>
+    <div class="bottom">
+      <CenterBottom :Data="dataAnalysi"></CenterBottom>
+    </div>
+    <div class="right-top">
+      <RightTop :totalPercentage="totalPercen" :Data="chargingTop4"></RightTop>
+    </div>
     <div class="right-center">
       <barEcharts :BarData="BarDatas"></barEcharts>
     </div>
     <div class="right-bottom">
-      <RightBottomSvg></RightBottomSvg>
+      <RightBottomSvg :dots="exceptionMonitoring"></RightBottomSvg>
     </div>
   </main>
 </template>
@@ -24,22 +30,44 @@ import pieEcharts from "../components/pie-echarts.vue";
 import lineEcharts from "../components/line-echarts.vue";
 import barEcharts from "../components/bar-echarts.vue";
 import RightBottomSvg from "../components/Right-Bottom-svg.vue";
-import { pieData, HomeLineData, BarData } from "./Config/Home-Echarts-Data";
+import CenterSvg from "../components/CenterSvg.vue";
+import CenterBottom from "../components/Center-Bottom.vue";
+import RightTop from "../components/Right-Top.vue";
+import {
+  pieData,
+  HomeLineData,
+  BarData,
+  exceptionMonitoringData,
+  dataAnalysisData,
+  chargingTop4Data,
+} from "./Config/Home-Echarts-Data";
 import { getPowerScreenData } from "@/services/index.js";
 
 let pieDatas = ref(pieData);
 let HomeLineDatas = ref(HomeLineData);
 let BarDatas = ref(BarData);
+let exceptionMonitoring = ref(exceptionMonitoringData);
+let dataAnalysi = ref(dataAnalysisData);
+let totalPercen = ref(0);
+let chargingTop4 = ref(chargingTop4Data);
 getPowerScreenData().then((res) => {
   // 对数据进行改变chargingStatistics
   const data = res?.data;
   pieDatas.value = data.chargingPile.data;
   HomeLineDatas.value = data.processMonitoring.data;
   BarDatas.value = data.chargingStatistics.data;
+  dataAnalysi.value = data.dataAnalysis.data;
+  totalPercen.value = data.chargingTop4.totalPercentage;
+  chargingTop4.value = data.chargingTop4.data;
 });
 </script>
 
 <style scoped>
+.bottom {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .screen-bg {
   position: absolute;
   width: 100%;
@@ -119,8 +147,6 @@ getPowerScreenData().then((res) => {
   bottom: 272px;
   width: 823px;
   height: 710px;
-
-  border: 5px solid pink;
 }
 .bottom {
   position: absolute;
